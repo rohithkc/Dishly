@@ -7,12 +7,14 @@ import openai
 # Load environment variables from .env file
 load_dotenv()
 
+# Access the OpenAI API key from environment variables
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
 app = Flask(__name__)
 CORS(app)
 
-# Load OpenAI API key from environment variables
-openai.api_key = os.getenv('OPENAI_API_KEY')
-print(f"OpenAI API Key: {os.getenv('OPENAI_API_KEY')}")
+# List to store ingredients
+ingredients_list = []
 
 @app.route('/')
 def home():
@@ -23,6 +25,9 @@ def generate_recipe():
     data = request.json
     ingredients = data.get('ingredients', '')
     prompt = f"Create a recipe with the following ingredients: {ingredients}\n"
+    
+    # Store the ingredients in the list
+    ingredients_list.append(ingredients)
 
     try:
         response = openai.Completion.create(
@@ -30,10 +35,19 @@ def generate_recipe():
             prompt=prompt,
             max_tokens=150
         )
+        print(f"OpenAI response: {response}")  # Log the raw response from OpenAI
+
         recipe = response.choices[0].text.strip()
+        print(f"Generated recipe: {recipe}")  # Log the generated recipe
+
         return jsonify({'recipe': recipe})
     except Exception as e:
+        print(f"Error: {str(e)}")  # Print the error for debugging
         return jsonify({'error': str(e)}), 500
 
+@app.route('/ingredients', methods=['GET'])
+def get_ingredients():
+    return jsonify({'ingredients': ingredients_list})
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
