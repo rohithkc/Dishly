@@ -8,7 +8,7 @@ import openai
 load_dotenv()
 
 # Access the OpenAI API key from environment variables
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 CORS(app)
@@ -24,20 +24,25 @@ def home():
 def generate_recipe():
     data = request.json
     ingredients = data.get('ingredients', '')
-    prompt = f"Create a recipe with the following ingredients: {ingredients}\n"
-    
     # Store the ingredients in the list
     ingredients_list.append(ingredients)
 
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=prompt,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"Create a recipe with the following ingredients: {ingredients}\n",
+                }
+            ],
             max_tokens=150
         )
+
         print(f"OpenAI response: {response}")  # Log the raw response from OpenAI
 
-        recipe = response.choices[0].text.strip()
+        # Correctly access the content of the response
+        recipe = response.choices[0].message['content'].strip()
         print(f"Generated recipe: {recipe}")  # Log the generated recipe
 
         return jsonify({'recipe': recipe})

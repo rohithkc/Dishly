@@ -36,3 +36,31 @@
     transform: rotate(360deg);
   }
 }
+
+/* Basic styles for the navigation bar */
+.navbar {
+  background-color: #333;
+  padding: 1rem;
+}
+
+.nav-links {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.nav-links li {
+  display: inline;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+  background-color: #555;
+}

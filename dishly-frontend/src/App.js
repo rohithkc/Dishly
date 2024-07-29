@@ -1,38 +1,36 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import Home from './Home';
+import Ingredients from './Ingredients';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  const [ingredients, setIngredients] = useState('');
-  const [recipe, setRecipe] = useState('');
-  const [error, setError] = useState('');
-
-  const generateRecipe = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/generate-recipe', { ingredients });
-      setRecipe(response.data.recipe);
-      setError('');
-    } catch (error) {
-      setError('Error generating recipe');
-      console.error('Error generating recipe:', error);
-    }
-  };
-
   return (
-    <div className="App">
-      <h1>Dishly</h1>
-      <input
-        type="text"
-        placeholder="Enter ingredients separated by commas"
-        value={ingredients}
-        onChange={(e) => setIngredients(e.target.value)}
-      />
-      <button onClick={generateRecipe}>Generate Recipe</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        <h2>Generated Recipe:</h2>
-        <p>{recipe}</p>
+    <Router>
+      <div className="App">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="container-fluid">
+            <Link className="navbar-brand" to="/">Dishly</Link>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/">Home</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/ingredients">Ingredients</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div className="container mt-4">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/ingredients" element={<Ingredients />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
